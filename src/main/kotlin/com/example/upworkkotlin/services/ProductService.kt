@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service
 @Service
 class ProductService(private val productRepository: ProductRepository) {
 
+
+
     fun getAllProducts(): List<ProductDto> {
         val products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "title"))
         return products.map { convertToDto(it) }
