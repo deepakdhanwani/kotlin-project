@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/layout :: html}">
+<body>
+    <div th:fragment="content">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Edit Product</h1>
+            <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/products/{id}(id=${product.id})}" method="post">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" th:value="${product.title}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="handle" class="form-label">Handle</label>
+                        <input type="text" class="form-control" id="handle" name="handle" th:value="${product.handle}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bodyHtml" class="form-label">Description</label>
+                        <textarea class="form-control" id="bodyHtml" name="bodyHtml" rows="5" th:text="${product.bodyHtml}"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="vendor" class="form-label">Vendor</label>
+                            <input type="text" class="form-control" id="vendor" name="vendor" th:value="${product.vendor}">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="productType" class="form-label">Product Type</label>
+                            <input type="text" class="form-control" id="productType" name="productType" th:value="${product.productType}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tags" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="tags" name="tags" th:value="${#strings.listJoin(product.tags, ', ')}">
+                        <small class="form-text text-muted">Separate tags with commas</small>
+                    </div>
+
+                    <h4 class="mt-4 mb-3">Variants</h4>
+                    <div class="alert alert-info">
+                        Variant editing is not supported in this version. Please use the API for advanced editing.
+                    </div>
+
+                    <h4 class="mt-4 mb-3">Options</h4>
+                    <div class="alert alert-info">
+                        Option editing is not supported in this version. Please use the API for advanced editing.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

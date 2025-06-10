@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/layout :: html}">
+<body>
+    <div th:fragment="content">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 th:text="${product.title}" class="text-primary">Product Title</h1>
+            <div>
+                <a th:href="@{/products}" class="btn btn-secondary">Back to Products</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Product Information Card with enhanced styling -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Product Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <tr>
+                                <th class="bg-light" style="width: 30%;">ID:</th>
+                                <td th:text="${product.id}" class="font-monospace"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Handle:</th>
+                                <td th:text="${product.handle}"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Vendor:</th>
+                                <td th:text="${product.vendor}" class="fw-bold"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Product Type:</th>
+                                <td><span class="badge bg-info" th:text="${product.productType}"></span></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Created At:</th>
+                                <td th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd HH:mm')}" class="text-muted"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Updated At:</th>
+                                <td th:text="${#dates.format(product.updatedAt, 'yyyy-MM-dd HH:mm')}" class="text-muted"></td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Published At:</th>
+                                <td th:text="${#dates.format(product.publishedAt, 'yyyy-MM-dd HH:mm')}" class="text-muted"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Description Card with enhanced styling -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>Description</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:utext="${product.bodyHtml}" class="product-description">Product description</div>
+                    </div>
+                </div>
+
+                <!-- Tags Card with enhanced styling -->
+                <div class="card mb-4 shadow-sm" th:if="${!#lists.isEmpty(product.tags)}">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="bi bi-tags me-2"></i>Tags</h5>
+                    </div>
+                    <div class="card-body">
+                        <span th:each="tag : ${product.tags}" class="badge bg-secondary me-1 mb-1 p-2" th:text="${tag}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <!-- Variants Card with enhanced styling -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="bi bi-box me-2"></i>Variants</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>SKU</th>
+                                        <th>Price</th>
+                                        <th>Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="variant : ${product.variants}">
+                                        <td th:text="${variant.title}" class="fw-bold"></td>
+                                        <td th:text="${variant.sku}" class="font-monospace"></td>
+                                        <td class="text-end fw-bold" th:text="${variant.price}"></td>
+                                        <td class="text-center">
+                                            <span th:if="${variant.available}" class="badge bg-success p-2">Yes</span>
+                                            <span th:unless="${variant.available}" class="badge bg-danger p-2">No</span>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(product.variants)}">
+                                        <td colspan="4" class="text-center text-muted">No variants found</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options Card with enhanced styling -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-list-check me-2"></i>Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:each="option : ${product.options}" class="mb-3 p-2 border-bottom">
+                            <h6 th:text="${option.name}" class="fw-bold">Option Name</h6>
+                            <div>
+                                <span th:each="value : ${option.values}" class="badge bg-primary me-1 mb-1 p-2" th:text="${value}"></span>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(product.options)}" class="text-center text-muted p-3">
+                            No options found
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images Card (if available) -->
+                <div class="card mb-4 shadow-sm" th:if="${!#lists.isEmpty(product.images)}">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0"><i class="bi bi-images me-2"></i>Images</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3" th:each="image : ${product.images}">
+                                <img th:if="${image.src != null}" th:src="${image.src}" class="img-fluid rounded" alt="Product Image">
+                                <div th:if="${image.src == null}" class="text-center text-muted p-4 border rounded">
+                                    No image available
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

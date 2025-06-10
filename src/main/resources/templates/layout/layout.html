@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management Application</title>
+    <!-- WebAwesome CSS Framework -->
+    <link rel="stylesheet" href="https://backers.webawesome.com/css/webawesome.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <!-- Header -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <div th:replace="~{:: content}"></div>
+    </main>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <!-- WebAwesome JavaScript -->
+    <script src="https://backers.webawesome.com/js/webawesome.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/scripts.js}"></script>
+</body>
+</html>

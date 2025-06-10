@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/layout :: html}">
+<body>
+    <div th:fragment="content">
+        <div class="wa-jumbotron">
+            <h1 class="wa-display-4">Welcome to Product Management System</h1>
+            <p class="wa-lead">This system allows you to manage your product catalog efficiently.</p>
+            <hr class="wa-my-4">
+            <p>Use the navigation menu to access different sections of the application.</p>
+            <a class="wa-btn wa-btn-primary wa-btn-lg" th:href="@{/products}" role="button">View Products</a>
+        </div>
+
+        <div class="wa-row wa-mt-4">
+            <div class="wa-col-md-4">
+                <div class="wa-card">
+                    <div class="wa-card-body">
+                        <h5 class="wa-card-title">Products</h5>
+                        <p class="wa-card-text">Manage your product catalog including variants, options, and images.</p>
+                        <a th:href="@{/products}" class="wa-btn wa-btn-primary">Go to Products</a>
+                    </div>
+                </div>
+            </div>
+            <div class="wa-col-md-4">
+                <div class="wa-card">
+                    <div class="wa-card-body">
+                        <h5 class="wa-card-title">Analytics</h5>
+                        <p class="wa-card-text">View analytics and reports about your product catalog.</p>
+                        <a href="#" class="wa-btn wa-btn-secondary">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+            <div class="wa-col-md-4">
+                <div class="wa-card">
+                    <div class="wa-card-body">
+                        <h5 class="wa-card-title">Settings</h5>
+                        <p class="wa-card-text">Configure system settings and user preferences.</p>
+                        <a href="#" class="wa-btn wa-btn-secondary">Coming Soon</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

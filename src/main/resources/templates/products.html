@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout/layout :: html}">
+<body>
+    <div th:fragment="content">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="wa-alert-success" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="wa-btn-close" onclick="this.parentElement.style.display='none';" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="wa-alert-danger" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="wa-btn-close" onclick="this.parentElement.style.display='none';" aria-label="Close"></button>
+        </div>
+
+        <div class="wa-d-flex wa-justify-content-between wa-align-items-center wa-mb-4">
+            <h1>Products</h1>
+            <div>
+                <button type="button" class="wa-btn wa-btn-success wa-me-2"
+                        hx-get="/products/load" 
+                        hx-target="#productsContainer" 
+                        hx-swap="innerHTML"
+                        hx-indicator="#loading-indicator">
+                    Load Products
+                </button>
+                <button type="button" class="wa-btn wa-btn-primary" onclick="document.getElementById('addProductModal').style.display='block';">
+                    Add New Product
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loading-indicator" class="htmx-indicator">
+            <div class="wa-d-flex wa-justify-content-center">
+                <div class="wa-spinner" role="status">
+                    <span class="wa-visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Table Container -->
+        <div id="productsContainer" th:fragment="productsContainer">
+            <!-- Table with fixed headers -->
+            <div class="wa-table-responsive">
+                <table class="wa-table wa-table-striped wa-table-hover">
+                    <thead class="wa-table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Vendor</th>
+                            <th>Product Type</th>
+                            <th>Variants</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Show this when no products are loaded -->
+                        <tr th:if="${products == null || #lists.isEmpty(products)}">
+                            <td colspan="6" class="wa-text-center">No products loaded. Click the "Load Products" button to fetch data.</td>
+                        </tr>
+                        <!-- Show this when products are loaded -->
+                        <tr th:if="${products != null && !#lists.isEmpty(products)}" th:each="product : ${products}">
+                            <td th:text="${product.id}"></td>
+                            <td th:text="${product.title}"></td>
+                            <td th:text="${product.vendor}"></td>
+                            <td th:text="${product.productType}"></td>
+                            <td th:text="${product.variants.size()}"></td>
+                            <td>
+                                <div class="wa-btn-group" role="group">
+                                    <a class="wa-btn wa-btn-sm wa-btn-primary" th:href="@{/products/{id}(id=${product.id})}">View</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Add Product Modal -->
+        <div class="wa-modal" id="addProductModal" style="display: none;">
+            <div class="wa-modal-dialog">
+                <div class="wa-modal-content">
+                    <div class="wa-modal-header">
+                        <h5 class="wa-modal-title" id="addProductModalLabel">Add New Product</h5>
+                        <button type="button" class="wa-btn-close" onclick="document.getElementById('addProductModal').style.display='none';" aria-label="Close"></button>
+                    </div>
+                    <div class="wa-modal-body">
+                        <form id="productForm" 
+                              th:object="${productDto}" 
+                              th:action="@{/products/create-htmx}" 
+                              method="post"
+                              hx-post="/products/create-htmx" 
+                              hx-target="#productsContainer" 
+                              hx-swap="innerHTML" 
+                              hx-indicator="#loading-indicator"
+                              hx-encoding="application/x-www-form-urlencoded">
+                            <!-- ID and dates will be generated on the server side -->
+
+                            <div class="wa-mb-3">
+                                <label for="title" class="wa-form-label">Title</label>
+                                <input type="text" class="wa-form-control" id="title" name="title" th:field="*{title}" required>
+                            </div>
+                            <div class="wa-mb-3">
+                                <label for="handle" class="wa-form-label">Handle</label>
+                                <input type="text" class="wa-form-control" id="handle" name="handle" th:field="*{handle}">
+                            </div>
+                            <div class="wa-mb-3">
+                                <label for="bodyHtml" class="wa-form-label">Description</label>
+                                <textarea class="wa-form-control" id="bodyHtml" name="bodyHtml" th:field="*{bodyHtml}" rows="3"></textarea>
+                            </div>
+                            <div class="wa-row">
+                                <div class="wa-col-md-6 wa-mb-3">
+                                    <label for="vendor" class="wa-form-label">Vendor</label>
+                                    <input type="text" class="wa-form-control" id="vendor" name="vendor" th:field="*{vendor}">
+                                </div>
+                                <div class="wa-col-md-6 wa-mb-3">
+                                    <label for="productType" class="wa-form-label">Product Type</label>
+                                    <input type="text" class="wa-form-control" id="productType" name="productType" th:field="*{productType}">
+                                </div>
+                            </div>
+                            <!-- We'll keep the form simple for now, not including variants, options, etc. -->
+                            <div class="wa-modal-footer">
+                                <button type="button" class="wa-btn wa-btn-secondary" onclick="document.getElementById('addProductModal').style.display='none';">Cancel</button>
+                                <button type="submit" class="wa-btn wa-btn-primary">Save Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for delete functionality and HTMX events -->
+        <script th:inline="javascript">
+            function deleteProduct(id) {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    fetch('/products/' + id, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Error deleting product');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting product');
+                    });
+                }
+            }
+
+            // We don't need a custom form submission function anymore since we're using standard form elements
+            // The form will be submitted by HTMX automatically
+
+            // Close the modal and reset the form after successful form submission
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                // Hide the modal
+                const modal = document.getElementById('addProductModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+
+                // Always reset the form after a successful swap
+                // since we're now always targeting the productsContainer
+                const form = document.getElementById('productForm');
+                if (form) {
+                    form.reset();
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
